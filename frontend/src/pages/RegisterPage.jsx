@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import AuthCard from '../components/AuthCard'
+import { UserIcon, MailIcon, LockIcon, SpinnerIcon } from '../components/icons'
 
 export default function RegisterPage() {
   const { register } = useAuth()
@@ -26,35 +28,70 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="auth-page">
-      <h2>Create an account</h2>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Username
-          <input value={username} onChange={(e) => setUsername(e.target.value)} minLength={3} required />
-        </label>
-        <label>
-          Email
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        </label>
-        <label>
-          Password
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            minLength={8}
-            required
-          />
-        </label>
+    <AuthCard title="Create an account" subtitle="Join the platform to publish and share snippets">
+      <form onSubmit={handleSubmit} className="auth-form" noValidate>
+        <div className="field-group">
+          <label htmlFor="username">Username</label>
+          <div className="input-icon-wrap">
+            <UserIcon className="input-icon" />
+            <input
+              id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              minLength={3}
+              disabled={submitting}
+              autoComplete="username"
+              required
+            />
+          </div>
+        </div>
+
+        <div className="field-group">
+          <label htmlFor="email">Email</label>
+          <div className="input-icon-wrap">
+            <MailIcon className="input-icon" />
+            <input
+              id="email"
+              type="email"
+              placeholder="name@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={submitting}
+              autoComplete="email"
+              required
+            />
+          </div>
+        </div>
+
+        <div className="field-group">
+          <label htmlFor="password">Password</label>
+          <div className="input-icon-wrap">
+            <LockIcon className="input-icon" />
+            <input
+              id="password"
+              type="password"
+              placeholder="At least 8 characters"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              minLength={8}
+              disabled={submitting}
+              autoComplete="new-password"
+              required
+            />
+          </div>
+        </div>
+
         {error && <p className="form-error">{error}</p>}
-        <button type="submit" disabled={submitting}>
+
+        <button type="submit" className="btn-auth-primary" disabled={submitting}>
+          {submitting && <SpinnerIcon />}
           {submitting ? 'Creating account…' : 'Register'}
         </button>
       </form>
-      <p>
+
+      <p className="auth-footer">
         Already have an account? <Link to="/login">Log in</Link>
       </p>
-    </div>
+    </AuthCard>
   )
 }

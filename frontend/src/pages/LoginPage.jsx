@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useLocation, useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import AuthCard from '../components/AuthCard'
+import { MailIcon, LockIcon, SpinnerIcon, GoogleIcon } from '../components/icons'
 
 export default function LoginPage() {
   const { login } = useAuth()
@@ -10,6 +12,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState(null)
   const [submitting, setSubmitting] = useState(false)
+  const [googleNotice, setGoogleNotice] = useState(false)
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -27,25 +30,67 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="auth-page">
-      <h2>Log in</h2>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Username or email
-          <input value={usernameOrEmail} onChange={(e) => setUsernameOrEmail(e.target.value)} required />
-        </label>
-        <label>
-          Password
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-        </label>
+    <AuthCard title="Welcome back" subtitle="Enter your credentials to access your account">
+      <form onSubmit={handleSubmit} className="auth-form" noValidate>
+        <div className="field-group">
+          <label htmlFor="usernameOrEmail">Email or username</label>
+          <div className="input-icon-wrap">
+            <MailIcon className="input-icon" />
+            <input
+              id="usernameOrEmail"
+              type="text"
+              placeholder="name@example.com"
+              value={usernameOrEmail}
+              onChange={(e) => setUsernameOrEmail(e.target.value)}
+              disabled={submitting}
+              autoComplete="username"
+              required
+            />
+          </div>
+        </div>
+
+        <div className="field-group">
+          <label htmlFor="password">Password</label>
+          <div className="input-icon-wrap">
+            <LockIcon className="input-icon" />
+            <input
+              id="password"
+              type="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={submitting}
+              autoComplete="current-password"
+              required
+            />
+          </div>
+        </div>
+
         {error && <p className="form-error">{error}</p>}
-        <button type="submit" disabled={submitting}>
-          {submitting ? 'Logging in…' : 'Log in'}
+
+        <button type="submit" className="btn-auth-primary" disabled={submitting}>
+          {submitting && <SpinnerIcon />}
+          {submitting ? 'Signing in…' : 'Sign in'}
         </button>
       </form>
-      <p>
+
+      <div className="auth-divider">
+        <span>Or continue with</span>
+      </div>
+
+      <button
+        type="button"
+        className="btn-auth-google"
+        onClick={() => setGoogleNotice(true)}
+      >
+        <GoogleIcon />
+        Sign in with Google
+      </button>
+      {googleNotice && <p className="auth-hint">Google sign-in is coming soon — use email/username for now.</p>}
+
+      <p className="auth-footer">
         No account yet? <Link to="/register">Register</Link>
       </p>
-    </div>
+    </AuthCard>
   )
 }
